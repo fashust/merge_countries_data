@@ -6,8 +6,8 @@ import aiohttp
 
 
 COUNTRIES_JSON_URL = (
-    'http://iatistandard.org/201/codelists/downloads'
-    '/clv3/json/en/OrganisationRegistrationAgency.json'
+    'http://standards.openprocurement.org/codelists/'
+    'organization-identifier-scheme/en.json'
 )
 COUNTRIES_CSV_DATA_URL = (
     'https://www.artlebedev.ru/tools/country-list/tab/'
@@ -57,20 +57,20 @@ async def get_countries_csv(loop):
     return _response
     
     
-async def merge_data(countries_json, countries_csv):
+async def merge_data(countries_json_data, countries_csv):
     """
     """
     for key, val in countries_csv.items():
         orig_keys = [
-            _ for _ in countries_json.keys()
+            _ for _ in countries_json_data.keys()
             if _[:2] == key
         ]
         if orig_keys:
             for _key in orig_keys:
-                data = countries_json[_key]
+                data = countries_json_data[_key]
                 data.update(val)
-                countries_json[_key] = data
-    return countries_json
+                countries_json_data[_key] = data
+    return countries_json_data
 
 
 def main():
@@ -81,7 +81,7 @@ def main():
     countries_json = loop.run_until_complete(get_countries_json_data(loop))
     countries_csv = loop.run_until_complete(get_countries_csv(loop))
     merged_data = loop.run_until_complete(merge_data(
-        countries_json, countries_csv
+        countries_json.copy(), countries_csv
     ))
     with open('merged.json', 'w', encoding='utf-8') as merged_file:
         merged_file.write(json.dumps(merged_data, indent=4, sort_keys=True))
