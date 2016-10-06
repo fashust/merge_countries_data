@@ -84,7 +84,14 @@ def main():
         countries_json.copy(), countries_csv
     ))
     with open('merged.json', 'w', encoding='utf-8') as merged_file:
-        merged_file.write(json.dumps(merged_data, indent=4, sort_keys=True))
+        merged_file.write(
+            json.dumps(
+                merged_data,
+                indent=4,
+                sort_keys=True,
+                ensure_ascii=False
+            )
+        )
 
 
 if __name__ == '__main__':
